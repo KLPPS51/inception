@@ -2,7 +2,7 @@
 # forbidden by the subject. Check https://alpinelinux.org/releases/
 # before the defense and update this line in all three Dockerfiles
 # if the penultimate stable release has moved.
-FROM alpine:3.20
+FROM alpine:3.23
 
 # Passed by docker-compose.yml from DOMAIN_NAME in srcs/.env, and used
 # only as the certificate's common name. It is not a credential.

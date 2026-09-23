@@ -2,7 +2,7 @@
 # forbidden by the subject. Check https://alpinelinux.org/releases/
 # before the defense and update this line in all three Dockerfiles
 # if the penultimate stable release has moved.
-FROM alpine:3.20
+FROM alpine:3.23
 
 RUN apk update && apk add --no-cache mariadb mariadb-client
 

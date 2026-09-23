@@ -2,18 +2,21 @@
 # forbidden by the subject. Check https://alpinelinux.org/releases/
 # before the defense and update this line in all three Dockerfiles
 # if the penultimate stable release has moved.
-FROM alpine:3.20
+FROM alpine:3.23
 
-# On Alpine the PHP packages carry their version in their name, and each
-# Alpine release ships one PHP version: 3.19 -> 82, 3.20 -> 83, 3.21 -> 84.
-# Keep this in step with the FROM line above.
-ARG PHP_VER=83
+# On Alpine the PHP packages carry their version in their name. Alpine 3.23
+# ships php83, php84 and php85 in the community repository; php84 is used
+# here because WordPress supports it fully. Keep this in step with the FROM
+# line above, and check the available versions with:
+#   docker run --rm alpine:3.23 apk search -e 'php8*-fpm'
+# Note: there is no php${PHP_VER}-json package, JSON is part of the PHP core
+# since PHP 8.
+ARG PHP_VER=84
 
 RUN apk update && apk add --no-cache \
         php${PHP_VER} \
         php${PHP_VER}-fpm \
         php${PHP_VER}-mysqli \
-        php${PHP_VER}-json \
         php${PHP_VER}-curl \
         php${PHP_VER}-dom \
         php${PHP_VER}-exif \

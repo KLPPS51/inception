@@ -375,33 +375,47 @@ list. Nothing is published to the host for that one, since it is internal.
 
 ### Changing the Alpine version
 
-The subject requires the **penultimate stable** version of Alpine or Debian.
-The three Dockerfiles pin it explicitly on their first line:
+The subject requires the **penultimate stable** version of Alpine or Debian,
+that is the branch just below the newest stable one. The three Dockerfiles
+pin it explicitly on their first line:
 
 ```dockerfile
-FROM alpine:3.20
+FROM alpine:3.23
 ```
 
-Check the current releases at https://alpinelinux.org/releases/ before the
-defense, and if the penultimate one has moved, change that line in all three
-Dockerfiles.
+Alpine publishes a new branch roughly every six months, in May and in
+November, and supports the last few at a time. Check
+https://alpinelinux.org/releases/ before the defense: if the newest stable
+branch has moved on, change that line in all three Dockerfiles.
 
-One thing must change with it: on Alpine, the PHP packages carry the version
-in their name, and each Alpine release ships one PHP version.
+Note that this rule applies to the **base image only**. The version of
+Docker Engine running on the host is not constrained by the subject, and
+should be a recent one: the project uses the `docker compose` v2 syntax,
+which the distribution's old `docker.io` package does not provide.
 
-| Alpine | PHP packages | `ARG PHP_VER` |
-| ------ | ------------ | ------------- |
-| 3.19   | `php82-*`    | `82`          |
-| 3.20   | `php83-*`    | `83`          |
-| 3.21   | `php84-*`    | `84`          |
+One thing must change along with the base image: on Alpine the PHP packages
+carry their version in their name, and each branch carries a different set.
 
-`srcs/requirements/wordpress/Dockerfile` declares `ARG PHP_VER=83` for
+| Alpine | PHP packages available          | `ARG PHP_VER` used here |
+| ------ | ------------------------------- | ----------------------- |
+| 3.20   | `php83-*`                       | `83`                    |
+| 3.21   | `php84-*`                       | `84`                    |
+| 3.22   | `php83-*`, `php84-*`            | `84`                    |
+| 3.23   | `php83-*`, `php84-*`, `php85-*` | `84`                    |
+
+`srcs/requirements/wordpress/Dockerfile` declares `ARG PHP_VER=84` for
 exactly this reason: every package name is built from it, so one line is
-enough. Confirm the right value with:
+enough. `84` rather than the newest `85`, because WordPress supports PHP 8.4
+fully while 8.5 is very recent.
+
+Confirm what a branch actually carries before changing the value:
 
 ```sh
-docker run --rm alpine:3.XX apk search -e 'php8*' | sort
+docker run --rm alpine:3.23 apk search -e 'php8*-fpm' | sort
 ```
+
+One trap: there is **no** `phpXX-json` package. JSON has been part of the PHP
+core since PHP 8, and asking for it makes the whole `apk add` fail.
 
 ### Adding a service
 
