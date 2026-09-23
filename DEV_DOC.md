@@ -19,9 +19,15 @@ If Docker is not installed:
 sh tools/install_docker_debian.sh
 ```
 
-The script adds Docker's official repository, installs the engine and the
-Compose plugin, and adds your user to the `docker` group. **Log out and back
-in** afterwards, otherwise every `docker` command will need `sudo`.
+The script detects whether the machine runs Debian or Ubuntu, removes the
+distribution's own Docker packages (`docker.io` and `docker-compose` ship an
+old engine and no Compose v2 plugin, and they conflict with `docker-ce`),
+adds Docker's official repository, installs the engine and the Compose
+plugin, and adds your user to the `docker` group. **Log out and back in**
+afterwards, otherwise every `docker` command will need `sudo`.
+
+If `docker --version` reports something like `20.10.24+dfsg1`, that is the
+Debian package and Compose v2 is missing; run the script to replace it.
 
 Check the result:
 
