@@ -1,0 +1,21 @@
+[mysqld]
+user                = mysql
+datadir             = /var/lib/mysql
+socket              = /run/mysqld/mysqld.sock
+pid-file            = /run/mysqld/mysqld.pid
+
+# Required. By default MariaDB listens on the loopback interface only,
+# and the wordpress container is a separate host on the Docker network,
+# so it would never be able to connect.
+bind-address        = 0.0.0.0
+skip-networking     = 0
+
+# Do not resolve client host names: pointless inside a Docker network,
+# and it slows every connection down.
+skip-name-resolve
+
+character-set-server = utf8mb4
+collation-server     = utf8mb4_general_ci
+
+[client]
+socket = /run/mysqld/mysqld.sock
